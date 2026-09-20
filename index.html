@@ -344,9 +344,17 @@
     display: none;
   }
 
-  @media (max-width: 480px) {
-    .question-card { padding: 1.25rem; }
-    .option-btn { font-size: 13px; }
+  @media (max-width: 600px) {
+    body { padding: 1rem 0.75rem; }
+    .header { margin-bottom: 1rem; }
+    .header h1 { font-size: 17px; }
+    .header p { display: none; }
+    .progress-label { font-size: 12px; margin-bottom: 0.35rem; }
+    .progress-bar-container { margin-bottom: 1rem; }
+    .question-card { padding: 1rem; margin-bottom: 0.75rem; }
+    .question-text { font-size: 15px; margin-bottom: 1rem; }
+    .option-btn { font-size: 13px; padding: 0.7rem 0.9rem; }
+    .options-list { gap: 8px; }
   }
 
   .result-actions {
