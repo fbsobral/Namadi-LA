@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avaliação de Learning Agility</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-sans, system-ui, sans-serif);
+    background: var(--surface-0, #f5f5f0);
+    color: var(--text-primary, #1a1a18);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .header {
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+
+  .header h1 {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .header p {
+    font-size: 15px;
+    color: var(--text-secondary, #5f5e5a);
+    line-height: 1.6;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .progress-bar-container {
+    background: var(--surface-1, #f0efe8);
+    border-radius: 999px;
+    height: 4px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--fill-accent, #378ADD);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-label {
+    font-size: 13px;
+    color: var(--text-muted, #888780);
+    text-align: right;
+    margin-bottom: 0.5rem;
+  }
+
+  .dimension-label {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-accent, #185FA5);
+    background: var(--bg-accent, #E6F1FB);
+    border-radius: 999px;
+    padding: 3px 10px;
+    margin-bottom: 1rem;
+    letter-spacing: 0.03em;
+  }
+
+  .question-card {
+    background: var(--surface-2, #fff);
+    border: 0.5px solid var(--border, rgba(0,0,0,0.12));
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .question-text {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--text-primary);
+    margin-bottom: 1.25rem;
+    font-family: var(--font-voice, Georgia, serif);
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style: none;
+  }
+
+  .option-btn {
+    background: var(--surface-1, #f0efe8);
+    border: 0.5px solid var(--border, rgba(0,0,0,0.12));
+    border-radius: var(--radius, 8px);
+    padding: 0.85rem 1.1rem;
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    width: 100%;
+  }
+
+  .option-btn:hover {
+    background: var(--bg-accent, #E6F1FB);
+    border-color: var(--border-accent, #85B7EB);
+  }
+
+  .option-btn.selected {
+    background: var(--bg-accent, #E6F1FB);
+    border-color: var(--fill-accent, #378ADD);
+    color: var(--text-accent, #185FA5);
+    font-weight: 500;
+  }
+
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+  }
+
+  .btn {
+    background: transparent;
+    border: 0.5px solid var(--border-strong, rgba(0,0,0,0.2));
+    border-radius: var(--radius, 8px);
+    padding: 0.6rem 1.25rem;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: background 0.15s;
+  }
+
+  .btn:hover { background: var(--surface-1, #f0efe8); }
+
+  .btn-primary {
+    background: var(--fill-accent, #378ADD);
+    border-color: var(--fill-accent, #378ADD);
+    color: #fff;
+  }
+
+  .btn-primary:hover { background: #185FA5; border-color: #185FA5; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .result-section { display: none; }
+
+  .result-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .result-header h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+
+  .result-header p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .radar-wrap {
+    background: var(--surface-2, #fff);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .dimension-results {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .dim-result-card {
+    background: var(--surface-2, #fff);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .dim-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
+  }
+
+  .dim-result-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .dim-result-score {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .dim-bar-bg {
+    height: 6px;
+    background: var(--surface-1, #f0efe8);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+
+  .dim-bar {
+    height: 6px;
+    border-radius: 999px;
+    transition: width 0.8s ease;
+  }
+
+  .dim-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  .dim-suggestion {
+    margin-top: 0.5rem;
+    font-size: 13px;
+    color: var(--text-accent, #185FA5);
+    background: var(--bg-accent, #E6F1FB);
+    border-radius: var(--radius);
+    padding: 0.6rem 0.85rem;
+    line-height: 1.5;
+  }
+
+  .overall-card {
+    background: var(--surface-2, #fff);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .overall-score {
+    font-size: 48px;
+    font-weight: 500;
+    color: var(--text-accent, #185FA5);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .overall-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .overall-text {
+    font-size: 15px;
+    color: var(--text-primary);
+    line-height: 1.65;
+    font-family: var(--font-voice, Georgia, serif);
+  }
+
+  .diagnosis-card {
+    background: var(--surface-2, #fff);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .diagnosis-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+
+  .diagnosis-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .diagnosis-list li {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding-left: 1.25rem;
+    position: relative;
+  }
+
+  .diagnosis-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--text-accent, #185FA5);
+    font-size: 13px;
+  }
+
+  .dim-section-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .error-msg {
+    font-size: 13px;
+    color: var(--text-danger, #A32D2D);
+    margin-top: 0.5rem;
+    display: none;
+  }
+
+  @media (max-width: 480px) {
+    .question-card { padding: 1.25rem; }
+    .option-btn { font-size: 13px; }
+  }
+
+  .result-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .container { max-width: 100%; }
+    #quiz-section { display: none !important; }
+    .result-actions { display: none !important; }
+    .radar-wrap { page-break-inside: avoid; }
+    .dim-result-card { page-break-inside: avoid; border: 1px solid #ddd; }
+    .dim-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .dim-suggestion { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #E6F1FB !important; color: #185FA5 !important; }
+    .overall-card { border: 1px solid #ddd; page-break-inside: avoid; }
+    .overall-score { color: #185FA5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .print-header { display: block !important; }
+    .print-footer { display: block !important; }
+    h1, h2, h3 { color: #1a1a18 !important; }
+  }
+
+  .print-header {
+    display: none;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .print-header h1 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+
+  .print-header p {
+    font-size: 13px;
+    color: #5f5e5a;
+  }
+
+  .print-footer {
+    display: none;
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ddd;
+    font-size: 12px;
+    color: #888;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>Avaliação de learning agility</h1>
+    <p>Cada situação abaixo reflete um momento real da vida — no trabalho, nas relações ou em você mesmo. Escolha a resposta que mais se parece com o que você realmente faz.</p>
+  </div>
+
+  <div id="quiz-section">
+    <div class="progress-label" id="progress-label">Situação 1 de 27</div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progress-bar" style="width: 3.7%"></div>
+    </div>
+
+    <div class="question-card" id="question-card">
+      <div class="dimension-label" id="dim-label"></div>
+      <p class="question-text" id="question-text"></p>
+      <ul class="options-list" id="options-list"></ul>
+      <p class="error-msg" id="error-msg">Escolha uma opção para continuar.</p>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" id="btn-back" onclick="goBack()">← Voltar</button>
+      <button class="btn btn-primary" id="btn-next" onclick="goNext()">Próxima →</button>
+    </div>
+  </div>
+
+  <div class="result-section" id="result-section">
+
+    <div class="print-header">
+      <h1>Avaliação de learning agility</h1>
+      <p id="print-date"></p>
+    </div>
+
+    <div class="result-header">
+      <h2>Seu perfil de learning agility</h2>
+      <p>Este é um retrato honesto de como você aprende, muda e se desenvolve — não uma nota, mas um ponto de partida.</p>
+    </div>
+
+    <div class="overall-card">
+      <div style="display:flex; align-items:baseline; justify-content:center; gap:16px;">
+        <div class="overall-score" id="overall-score"></div>
+        <div style="font-size:22px; font-weight:500; color:#888780;" id="overall-nota"></div>
+      </div>
+      <div class="overall-label">pontuação geral</div>
+    </div>
+
+    <div class="diagnosis-card">
+      <div class="diagnosis-title">Diagnóstico geral</div>
+      <ul class="diagnosis-list" id="diagnosis-bullets"></ul>
+    </div>
+
+    <div class="radar-wrap">
+      <canvas id="radar-chart" width="480" height="380"></canvas>
+    </div>
+
+    <div class="dim-section-title">Detalhamento por dimensão</div>
+    <div class="dimension-results" id="dimension-results"></div>
+
+    <div class="print-footer">
+      Baseado no modelo Burke Learning Agility Inventory (Burke LAI) — W. Warner Burke, Teachers College, Columbia University
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-primary" onclick="downloadPDF()">Baixar resultado em PDF</button>
+      <button class="btn" onclick="restart()">Refazer avaliação</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+const dimensions = [
+  { key: "reflecting", name: "Refletir", color: "#534AB7" },
+  { key: "experimenting", name: "Experimentar", color: "#0F6E56" },
+  { key: "perf_risk", name: "Risco de desempenho", color: "#D85A30" },
+  { key: "interp_risk", name: "Risco interpessoal", color: "#D4537E" },
+  { key: "collaborating", name: "Colaborar", color: "#185FA5" },
+  { key: "info_gathering", name: "Buscar informação", color: "#639922" },
+  { key: "flexibility", name: "Flexibilidade", color: "#BA7517" },
+  { key: "speed", name: "Velocidade", color: "#888780" },
+  { key: "feedback", name: "Buscar feedback", color: "#993556" }
+];
+
+const questions = [
+  {
+    dim: "reflecting",
+    text: "Depois de uma conversa difícil — uma briga, um mal-entendido, uma decepção — o que você costuma fazer?",
+    options: [
+      { text: "Deixo pra lá. Não adianta ficar ruminando o que passou.", score: 1 },
+      { text: "Penso brevemente no que aconteceu, sem aprofundar muito.", score: 2 },
+      { text: "Fico alguns dias processando e tento entender meu papel na situação.", score: 3 },
+      { text: "Reservo um tempo para entender o que senti, o que aprendi e o que faria diferente.", score: 4 }
+    ]
+  },
+  {
+    dim: "reflecting",
+    text: "Você está passando por uma fase intensa — muito acontecendo ao mesmo tempo. Como você lida com isso internamente?",
+    options: [
+      { text: "Vou tocando sem parar para pensar. A ação me mantém de pé.", score: 1 },
+      { text: "Às vezes paro um momento, mas não é algo que faço com regularidade.", score: 2 },
+      { text: "Tenho um hábito — andar, escrever, conversar — que me ajuda a processar.", score: 3 },
+      { text: "Mantenho uma prática regular de autoavaliação, mesmo nas fases mais intensas.", score: 4 }
+    ]
+  },
+  {
+    dim: "reflecting",
+    text: "Você tomou uma decisão que não deu o resultado esperado. O que vem depois?",
+    options: [
+      { text: "Sigo em frente. Analisar o passado me paralisa.", score: 1 },
+      { text: "Penso no que errei, mas sem muita estrutura ou intenção.", score: 2 },
+      { text: "Identifico o que teria feito diferente e anoto para não repetir.", score: 3 },
+      { text: "Analiso o processo com cuidado e uso o aprendizado para calibrar as próximas decisões.", score: 4 }
+    ]
+  },
+  {
+    dim: "experimenting",
+    text: "Você tem um jeito que sempre funcionou para organizar sua rotina. Alguém te apresenta uma abordagem completamente diferente. O que você faz?",
+    options: [
+      { text: "Fico no que funciona. Mudar por mudar não me interessa.", score: 1 },
+      { text: "Ouço com interesse, mas dificilmente mudo de verdade.", score: 2 },
+      { text: "Experimento por um tempo para ver se faz sentido pra mim.", score: 3 },
+      { text: "Fico genuinamente curioso e testo a ideia sem apego ao resultado.", score: 4 }
+    ]
+  },
+  {
+    dim: "experimenting",
+    text: "Você está aprendendo algo novo — um instrumento, uma habilidade, um idioma. Como você aprende melhor?",
+    options: [
+      { text: "Preciso de um método claro e comprovado antes de começar.", score: 1 },
+      { text: "Sigo um roteiro, mas às vezes desvio quando tenho curiosidade.", score: 2 },
+      { text: "Gosto de explorar diferentes abordagens e ver qual funciona melhor.", score: 3 },
+      { text: "Experimento, erro e ajusto. O erro é parte natural do processo pra mim.", score: 4 }
+    ]
+  },
+  {
+    dim: "experimenting",
+    text: "Algo não está funcionando na sua vida — um hábito, uma relação, uma rotina. O que você tende a fazer?",
+    options: [
+      { text: "Aguento como está até não conseguir mais.", score: 1 },
+      { text: "Penso em possíveis mudanças, mas demoro para agir de fato.", score: 2 },
+      { text: "Faço ajustes graduais, observando o que funciona e o que não funciona.", score: 3 },
+      { text: "Proponho a mim mesmo uma mudança concreta e acompanho os efeitos.", score: 4 }
+    ]
+  },
+  {
+    dim: "perf_risk",
+    text: "Surge uma oportunidade — um projeto, um papel, uma responsabilidade — para a qual você não se sente 100% preparado. O que acontece?",
+    options: [
+      { text: "Espero estar mais preparado antes de aceitar ou me oferecer.", score: 1 },
+      { text: "Aceito, mas com custo emocional alto e muita insegurança.", score: 2 },
+      { text: "Aceito mesmo inseguro, sabendo que vou aprender no processo.", score: 3 },
+      { text: "Busco ativamente esse tipo de oportunidade. É onde mais aprendo.", score: 4 }
+    ]
+  },
+  {
+    dim: "perf_risk",
+    text: "Você está em um contexto onde pode se expor — uma apresentação, uma conversa importante, um projeto novo. O que passa pela sua cabeça?",
+    options: [
+      { text: "Prefiro não me expor. O risco de errar na frente dos outros é alto.", score: 1 },
+      { text: "Me exponho quando não tem outro jeito. Não é confortável.", score: 2 },
+      { text: "Me exponho com algum desconforto, mas consigo manejar bem.", score: 3 },
+      { text: "A exposição me energiza. É onde o aprendizado real acontece.", score: 4 }
+    ]
+  },
+  {
+    dim: "perf_risk",
+    text: "Você fracassou em algo que importava para você. Como isso afeta sua disposição de tentar de novo?",
+    options: [
+      { text: "Me afasta por um bom tempo. Fico com medo de repetir.", score: 1 },
+      { text: "Me freia por um período, mas eventualmente retomo.", score: 2 },
+      { text: "Processo o que aconteceu e volto mais calibrado e preparado.", score: 3 },
+      { text: "O fracasso me diz algo útil. Uso como dado e sigo mais rápido.", score: 4 }
+    ]
+  },
+  {
+    dim: "interp_risk",
+    text: "Você percebe que alguém próximo está em uma direção que pode ser prejudicial para ela. O que você faz?",
+    options: [
+      { text: "Fico quieto. Não sinto que é meu lugar intervir.", score: 1 },
+      { text: "Dou algumas indiretas, mas sem abordar o assunto diretamente.", score: 2 },
+      { text: "Escolho um momento adequado e falo com cuidado.", score: 3 },
+      { text: "Falo com honestidade e afeto, mesmo que gere desconforto.", score: 4 }
+    ]
+  },
+  {
+    dim: "interp_risk",
+    text: "Em uma conversa em grupo, você discorda da opinião majoritária. O que acontece?",
+    options: [
+      { text: "Fico quieto para não criar conflito desnecessário.", score: 1 },
+      { text: "Concordo em parte e suavizo o que penso de verdade.", score: 2 },
+      { text: "Apresento minha perspectiva com bastante cuidado.", score: 3 },
+      { text: "Compartilho o que penso com clareza. Discordância bem colocada é saudável.", score: 4 }
+    ]
+  },
+  {
+    dim: "interp_risk",
+    text: "Você cometeu um erro que afetou alguém próximo. Como você costuma lidar?",
+    options: [
+      { text: "Espero que a situação se resolva por conta própria.", score: 1 },
+      { text: "Fico desconfortável por um tempo, mas eventualmente reconheço.", score: 2 },
+      { text: "Reconheço com relativa rapidez, mesmo sendo difícil.", score: 3 },
+      { text: "Reconheço com clareza, busco reparar e aprendo com o que ocorreu.", score: 4 }
+    ]
+  },
+  {
+    dim: "collaborating",
+    text: "Você está resolvendo um problema difícil. Como você naturalmente tende a trabalhar?",
+    options: [
+      { text: "Prefiro resolver sozinho. Envolver outros costuma complicar.", score: 1 },
+      { text: "Peço ajuda quando estou travado, mas prefiro ir sozinho.", score: 2 },
+      { text: "Gosto de pensar junto com pessoas em quem confio.", score: 3 },
+      { text: "Busco perspectivas diversas intencionalmente. Pensar junto me expande.", score: 4 }
+    ]
+  },
+  {
+    dim: "collaborating",
+    text: "Você está em um grupo onde as pessoas pensam de formas muito diferentes da sua. Como você se sente?",
+    options: [
+      { text: "Fico desconfortável. Prefiro trabalhar com pessoas parecidas comigo.", score: 1 },
+      { text: "Tolero bem, mas não sei como aproveitar as diferenças.", score: 2 },
+      { text: "Consigo me adaptar e extrair algo das perspectivas diferentes.", score: 3 },
+      { text: "Vejo as diferenças como recurso. É onde surgem as ideias mais ricas.", score: 4 }
+    ]
+  },
+  {
+    dim: "collaborating",
+    text: "Alguém te pede ajuda em algo que vai além do que você costuma fazer. O que você faz?",
+    options: [
+      { text: "Declino. Não quero me comprometer com algo que não domino.", score: 1 },
+      { text: "Ajudo no que me sinto seguro e evito o restante.", score: 2 },
+      { text: "Tento ajudar mesmo fora da minha zona de conforto habitual.", score: 3 },
+      { text: "Mergulho junto. Colaborar em território novo acelera meu aprendizado.", score: 4 }
+    ]
+  },
+  {
+    dim: "info_gathering",
+    text: "Você vai tomar uma decisão importante — mudar de cidade, encerrar uma relação, mudar de área. Como você se prepara?",
+    options: [
+      { text: "Confio no instinto. Pesquisar demais me paralisa.", score: 1 },
+      { text: "Busco a opinião de uma ou duas pessoas próximas.", score: 2 },
+      { text: "Pesquiso em diferentes fontes antes de decidir.", score: 3 },
+      { text: "Monto um quadro amplo com dados, experiências e intuições antes de avançar.", score: 4 }
+    ]
+  },
+  {
+    dim: "info_gathering",
+    text: "Você quer entender algo que não conhece bem — um tema, uma área, uma pessoa. Como você aborda?",
+    options: [
+      { text: "Pergunto para quem entende e fico por isso.", score: 1 },
+      { text: "Busco em uma ou duas fontes que já conheço.", score: 2 },
+      { text: "Pesquiso em fontes variadas e cruzo o que aprendo.", score: 3 },
+      { text: "Busco múltiplas perspectivas e fico curioso quando elas se contradizem.", score: 4 }
+    ]
+  },
+  {
+    dim: "info_gathering",
+    text: "Você está em uma situação nova — uma cidade diferente, pessoas desconhecidas, um contexto inédito. Como você reage?",
+    options: [
+      { text: "Fico quieto e espero entender o ambiente antes de me abrir.", score: 1 },
+      { text: "Observo bastante antes de começar a interagir.", score: 2 },
+      { text: "Faço perguntas e busco entender o contexto ativamente.", score: 3 },
+      { text: "Sinto curiosidade genuína. Contextos novos me energizam.", score: 4 }
+    ]
+  },
+  {
+    dim: "flexibility",
+    text: "Você tinha um plano — para o fim de semana, para o mês, para a vida. Algo muda e o plano vai por água abaixo. Como você reage?",
+    options: [
+      { text: "Fico desestabilizado. Quebrar planos é bastante difícil pra mim.", score: 1 },
+      { text: "Me incomoda bastante, mas consigo me adaptar com o tempo.", score: 2 },
+      { text: "Me adapto com relativa rapidez, embora com algum custo emocional.", score: 3 },
+      { text: "Vejo a mudança como uma nova variável. Reorganizo e sigo em frente.", score: 4 }
+    ]
+  },
+  {
+    dim: "flexibility",
+    text: "Alguém apresenta uma ideia diferente da sua sobre um tema que você conhece bem. Como você costuma responder?",
+    options: [
+      { text: "Defendo meu ponto. Já estudei o suficiente para saber o que funciona.", score: 1 },
+      { text: "Ouço com atenção, mas dificilmente revejo minha posição.", score: 2 },
+      { text: "Fico aberto se a pessoa trouxer bons argumentos.", score: 3 },
+      { text: "Fico genuinamente curioso. A perspectiva oposta costuma ter algo que não vi.", score: 4 }
+    ]
+  },
+  {
+    dim: "flexibility",
+    text: "Você percebe que uma crença ou hábito seu não está mais servindo. O que acontece?",
+    options: [
+      { text: "Demoro muito para reconhecer. Mudar algo enraizado é muito difícil.", score: 1 },
+      { text: "Reconheço, mas a mudança acaba sendo lenta e custosa.", score: 2 },
+      { text: "Reconheço e faço o esforço de mudar, mesmo que seja gradual.", score: 3 },
+      { text: "Vejo a revisão de crenças como parte natural do crescimento.", score: 4 }
+    ]
+  },
+  {
+    dim: "speed",
+    text: "Você está em uma situação nova e não tem todas as informações que gostaria. O que você faz?",
+    options: [
+      { text: "Espero ter mais certeza antes de agir.", score: 1 },
+      { text: "Demoro um pouco, mas eventualmente tomo uma direção.", score: 2 },
+      { text: "Ajo com o que tenho e vou ajustando no caminho.", score: 3 },
+      { text: "Prefiro agir rápido e corrigir rápido a ficar esperando certeza.", score: 4 }
+    ]
+  },
+  {
+    dim: "speed",
+    text: "Você testa algo — uma abordagem, uma conversa, uma rotina — e percebe que não está funcionando. O que você faz?",
+    options: [
+      { text: "Insisto. Acho que precisa de mais tempo para mostrar resultado.", score: 1 },
+      { text: "Fico em dúvida por um tempo antes de mudar de rota.", score: 2 },
+      { text: "Reconheço com relativa rapidez e mudo de direção.", score: 3 },
+      { text: "Descarto sem apego e parto logo para a próxima hipótese.", score: 4 }
+    ]
+  },
+  {
+    dim: "speed",
+    text: "Algo urgente e inesperado acontece na sua vida. Como você costuma responder?",
+    options: [
+      { text: "Travo. Preciso de tempo para processar antes de conseguir agir.", score: 1 },
+      { text: "Reajo com custo emocional alto, mas eventualmente respondo.", score: 2 },
+      { text: "Me reorganizo com razoável rapidez e sigo em frente.", score: 3 },
+      { text: "Aciono o que precisa ser acionado. Urgências me deixam focado.", score: 4 }
+    ]
+  },
+  {
+    dim: "feedback",
+    text: "Alguém de confiança te diz algo difícil sobre você — um padrão, um comportamento, um ponto cego. Como você reage?",
+    options: [
+      { text: "Fico na defensiva. É difícil não levar para o lado pessoal.", score: 1 },
+      { text: "Ouço com dificuldade e demoro a integrar de verdade.", score: 2 },
+      { text: "Escuto com atenção e processo com calma depois.", score: 3 },
+      { text: "Fico grato. Feedback honesto e direto é raro e valioso.", score: 4 }
+    ]
+  },
+  {
+    dim: "feedback",
+    text: "Você quer melhorar em algo — uma habilidade, um comportamento, uma relação. O que você faz?",
+    options: [
+      { text: "Trabalho sozinho. Não gosto de expor minhas fragilidades.", score: 1 },
+      { text: "Peço feedback quando sinto que é seguro fazer isso.", score: 2 },
+      { text: "Busco ativamente a opinião de quem pode me dizer algo útil.", score: 3 },
+      { text: "Peço feedback com regularidade, mesmo quando é difícil ouvir.", score: 4 }
+    ]
+  },
+  {
+    dim: "feedback",
+    text: "Você recebe um elogio ou reconhecimento por algo que fez. Como você lida?",
+    options: [
+      { text: "Fico desconfortável. Tenho dificuldade genuína de receber.", score: 1 },
+      { text: "Agradeço rapidamente e desvio do assunto logo em seguida.", score: 2 },
+      { text: "Recebo com tranquilidade e uso para calibrar o que funciona.", score: 3 },
+      { text: "Recebo bem e fico curioso sobre o que exatamente fez diferença.", score: 4 }
+    ]
+  }
+];
+
+let currentQ = 0;
+let answers = [];
+let radarChart = null;
+let shuffledQuestions = [];
+
+const STORAGE_KEY = "namadi_la_state";
+
+function saveState(showingResults) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      shuffledQuestions,
+      answers,
+      currentQ,
+      showingResults: !!showingResults
+    }));
+  } catch (e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) { return null; }
+}
+
+function clearState() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+}
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function initQuiz() {
+  shuffledQuestions = shuffleArray(questions);
+  answers = Array(shuffledQuestions.length).fill(null);
+  currentQ = 0;
+}
+
+const dimDescriptions = {
+  reflecting: {
+    low: "Você tem dificuldade de parar para processar o que viveu. A tendência é seguir em frente sem revisar — o que cria eficiência aparente no curto prazo, mas acumula padrões não examinados ao longo do tempo. Sem reflexão, os mesmos erros tendem a se repetir com roupas diferentes. Pessoas com baixa capacidade reflexiva frequentemente sentem que 'a vida está acontecendo com elas' em vez de perceber que seus padrões contribuem para os ciclos que vivem. O desenvolvimento aqui começa com pequenos gestos: uma pausa intencional, uma pergunta simples ao fim do dia.",
+    mid: "Você reflete, mas de forma irregular ou pouco profunda. Em momentos de crise ou mudança você consegue revisitar o que aconteceu, mas isso não é uma prática consistente. O risco é que a reflexão aconteça só quando a dor força — e não como instrumento de crescimento ativo. Você já tem a habilidade; o que falta é torná-la um hábito intencional, não uma reação ao sofrimento.",
+    high: "Você tem uma das capacidades mais raras no desenvolvimento humano: consegue transformar experiência em aprendizado de forma deliberada. Isso significa que cada situação — mesmo as dolorosas — vira um dado. Você não apenas vive as coisas; você as processa, extrai padrões e calibra o que vem depois. Isso cria um ciclo virtuoso: quanto mais você reflete, mais rápido você aprende."
+  },
+  experimenting: {
+    low: "Você tende a permanecer no que já conhece e funciona. Há segurança nisso — e também um custo invisível: o crescimento acontece quase sempre fora da zona de conforto, e quem raramente sai dela acaba desenvolvendo apenas o que já tem. A aversão à experimentação muitas vezes não é preguiça — é medo de errar ou de parecer incompetente. Identificar esse medo é o primeiro passo.",
+    mid: "Você experimenta quando o contexto é seguro ou quando não tem outra saída, mas ainda carrega apego ao método que já conhece. A experimentação, pra você, é uma exceção — não uma postura. O desafio é começar a tratar o 'não sei como vai sair' não como ameaça, mas como dado neutro. Tolerância ao não saber é uma habilidade que se treina.",
+    high: "Você tem uma postura de laboratório diante da vida: testa, observa, ajusta e segue. Isso significa que o erro não é o fim de algo — é informação. Essa disposição para experimentar sem apego ao resultado é um dos maiores aceleradores de aprendizado que existem. Você aprende mais rápido do que a maioria porque não espera estar pronto para começar."
+  },
+  perf_risk: {
+    low: "Você tende a esperar estar preparado antes de agir ou se expor. O problema estrutural dessa postura é que a preparação raramente precede a experiência — ela vem dela. Quem espera estar pronto para assumir um desafio novo costuma esperar indefinidamente. Por baixo disso geralmente há um medo do julgamento externo ou uma crença de que errar publicamente diminui o valor da pessoa.",
+    mid: "Você aceita desafios, mas com um custo emocional alto. A insegurança te acompanha mais do que deveria e muitas vezes torna a experiência mais pesada do que ela precisaria ser. Você está desenvolvendo essa capacidade — o próximo passo é trabalhar a relação com o erro em si: entender que errar diante dos outros não diz nada sobre quem você é, só sobre o que você ainda está aprendendo.",
+    high: "Você busca ativamente situações onde pode se expor, onde o resultado é incerto e onde o fracasso é possível. Isso é raro. A maioria das pessoas evita exatamente esses contextos. Sua disposição de arriscar o desempenho — de tentar algo novo mesmo sem garantia — é o que cria as condições para o crescimento real acontecer. Você aprendeu que o desconforto da exposição é temporário e o aprendizado é permanente."
+  },
+  interp_risk: {
+    low: "Você tende a evitar conversas difíceis — feedbacks honestos, discordâncias diretas, confrontos necessários. Isso pode vir de um desejo de preservar a harmonia, mas o efeito colateral é que as relações ficam na superfície e o aprendizado que vem do atrito real não acontece. Conversas difíceis bem conduzidas são das experiências mais transformadoras que existem — tanto para quem fala quanto para quem ouve.",
+    mid: "Você tem alguma disposição para conversas difíceis, mas ainda com muito custo emocional. Você fala — mas depois fica com a sensação de ter dito demais ou de menos. O trabalho aqui é aprender a distinguir honestidade de crueldade: é possível dizer o que é verdadeiro com cuidado, sem suavizar a ponto de perder o conteúdo. A prática de começar com perguntas em vez de afirmações costuma ajudar.",
+    high: "Você tem coragem relacional — a capacidade de dizer o que é verdadeiro mesmo quando isso pode gerar desconforto. Isso é uma das formas mais profundas de respeito que existem: tratar o outro como alguém capaz de ouvir e crescer. Você também aprende muito nessas trocas, porque ao se expor genuinamente você cria condições para que o outro faça o mesmo."
+  },
+  collaborating: {
+    low: "Você prefere trabalhar sozinho — e há força nisso. Autonomia, foco e velocidade são reais vantagens. O custo é que você perde o tipo de aprendizado que só acontece no contato com quem pensa diferente. Perspectivas que você nunca consideraria sozinho ficam inacessíveis. O desenvolvimento aqui não é abandonar a autonomia, mas aprender a usar o outro como recurso — não como dependência.",
+    mid: "Você colabora quando precisa, mas ainda não explora o potencial do pensamento coletivo. Quando trabalha com outros, tende a buscar quem já pensa parecido — o que é confortável, mas limita. O próximo nível é buscar intencionalmente perspectivas diferentes, especialmente as que te desafiam. É nesses encontros que aparecem as ideias mais inesperadas.",
+    high: "Você usa o outro como recurso genuíno de aprendizado. Não colabora por obrigação — colabora porque sabe que o pensamento coletivo produz algo que o pensamento individual não consegue. Você tem a rara capacidade de se manter presente em trocas com quem pensa muito diferente de você, sem precisar resolver a diferença nem se defender dela."
+  },
+  info_gathering: {
+    low: "Você tende a agir mais por intuição do que por investigação. A intuição é valiosa — especialmente quando vem de muita experiência acumulada. Mas quando usada sozinha, sem cruzar com informação externa, ela confirma mais o que você já pensa do que revela o que você ainda não viu. O hábito de buscar perspectivas que contradizem o que você já acredita é o que mantém o pensamento vivo e a decisão calibrada.",
+    mid: "Você busca informação antes de decidir, mas ainda em fontes previsíveis — as mesmas pessoas, os mesmos canais, os mesmos tipos de argumento. Isso cria uma zona de conforto epistêmica: você se informa, mas dentro de uma bolha que confirma o que já pensa. Ampliar as fontes — especialmente as que desafiam suas premissas — é o que transforma busca de informação em aprendizado real.",
+    high: "Você tem uma curiosidade estruturada: sabe onde buscar, como cruzar fontes e como usar perspectivas contraditórias para calibrar melhor sua visão. Isso é uma competência rara. Você não busca informação só para confirmar o que já pensa — busca para entender o que ainda não enxerga. Isso torna suas decisões mais robustas e sua visão mais ampla."
+  },
+  flexibility: {
+    low: "Você tem dificuldade com mudanças de plano, revisão de crenças e adaptação a contextos novos. Isso cria estabilidade — há valor em consistência e previsibilidade. Mas em ambientes que mudam, rigidez vira fragilidade. O desenvolvimento aqui começa por identificar onde a dificuldade de mudar vem de valores reais e onde vem de apego a como as coisas sempre foram.",
+    mid: "Você consegue se adaptar, mas com custo. Mudanças de plano te desestabilizam mais do que deveriam, e rever posições estabelecidas ainda é um processo lento e pesado. Você já tem a capacidade — o que falta é desenvolver mais tolerância ao estado de transição: aquele momento entre o que era e o que ainda não é. Nomear esse estado, em vez de resistir a ele, é o começo.",
+    high: "Você tem uma relação fluida com a mudança. Consegue rever planos sem se desintegrar, mudar de opinião sem sentir que perdeu algo e adaptar comportamentos sem precisar defender os anteriores. Isso é adaptabilidade real — não ausência de convicções, mas capacidade de atualizar convicções quando o contexto pede."
+  },
+  speed: {
+    low: "Você precisa de mais tempo do que o ideal para agir em situações novas ou incertas. Em contextos que pedem movimento rápido, essa demora pode ser um freio real — tanto para você quanto para quem depende de você. Geralmente isso vem de uma necessidade de certeza antes da ação. O trabalho aqui é aprender a agir com 70% da informação e ajustar no caminho — em vez de esperar os 100% que raramente chegam.",
+    mid: "Você age, mas com mais lentidão do que o contexto frequentemente pede. Você sabe o que precisa fazer, mas demora para se mover — e às vezes essa demora tem custo real. O próximo nível é desenvolver mais conforto com a ação imperfeita: entender que uma ação boa agora costuma ser mais valiosa do que uma ação perfeita tarde demais.",
+    high: "Você age rápido, ajusta rápido e descarta sem apego quando algo não funciona. Essa velocidade de processamento é uma das dimensões mais poderosas da learning agility — porque ela comprime o ciclo de aprendizado. Você não espera a situação perfeita para agir; você cria aprendizado pelo movimento. O único cuidado é não confundir velocidade com impulsividade — a sua speed é mais valiosa quando aliada à reflexão."
+  },
+  feedback: {
+    low: "Você tem dificuldade tanto em buscar quanto em receber feedback. Isso cria um ponto cego importante: você só melhora no que consegue enxergar — e sem o olhar externo, partes significativas do seu comportamento ficam fora do campo de visão. Essa dificuldade frequentemente vem de uma crença de que feedback é julgamento, não dado. Quando você começa a tratá-lo como informação — neutra, útil, calibrável — a relação com ele muda.",
+    mid: "Você aceita feedback quando ele chega, mas não o busca ativamente. Isso significa que seu desenvolvimento fica dependente da iniciativa do outro — o que é lento e irregular. Tornar o feedback uma prática ativa, especialmente o feedback difícil, é o que acelera o crescimento de forma consistente. Pedir feedback regularmente — mesmo quando é desconfortável — é uma das práticas mais poderosas de desenvolvimento pessoal.",
+    high: "Você usa o olhar do outro como espelho — de forma ativa, regular e sem defensividade. Isso é raro. A maioria das pessoas tolera feedback; você o busca. Isso significa que você tem acesso a uma fonte de aprendizado que a maioria não tem: a perspectiva honesta de quem te observa de fora. Seu desafio agora é saber filtrar — nem todo feedback tem o mesmo peso, e desenvolver discernimento sobre quem e o quê vale ouvir é o próximo nível."
+  }
+};
+
+const dimSuggestions = {
+  reflecting: {
+    low: "Comece pequeno: ao fim de cada dia, faça uma única pergunta a si mesmo — 'o que aconteceu hoje que valeria entender melhor?' Escreva uma linha. Isso já é reflexão. Com o tempo, amplie para revisões semanais.",
+    mid: "Crie um ritual fixo de revisão — semanal ou quinzenal. Uma pergunta como 'qual padrão eu notei em mim essa semana?' é suficiente para começar. Compartilhar com alguém de confiança transforma a reflexão em diálogo e aprofunda o aprendizado.",
+    high: "Seu próximo nível é transformar reflexão em ensino. Quando você articula o que aprendeu para outra pessoa — um amigo, um mentorado, um texto — o aprendizado se solidifica e se aprofunda. Considere também revisar não só o que aconteceu, mas os padrões que atravessam diferentes situações."
+  },
+  experimenting: {
+    low: "Escolha uma área pequena e proponha a si mesmo um experimento de 7 dias: algo diferente do habitual, sem pressão de resultado. O objetivo não é melhorar — é só observar o que acontece quando você muda uma variável.",
+    mid: "Da próxima vez que algo não estiver funcionando, tente o oposto do que você faria normalmente. Não como solução definitiva — como experimento. Pergunte: 'o que eu descobriria se tentasse diferente?'",
+    high: "Documente seus experimentos de forma simples: o que você testou, o que aprendeu, o que descartou. Isso transforma experiências isoladas em inteligência acumulada — e te ajuda a reconhecer padrões no seu próprio processo de aprendizado."
+  },
+  perf_risk: {
+    low: "Identifique uma oportunidade pequena onde você pode se expor mais do que o normal — uma opinião em público, uma tarefa nova, um papel que você normalmente recusaria. Risco calibrado é o começo. O objetivo não é ser perfeito; é descobrir que o fracasso não é o fim.",
+    mid: "Na próxima vez que uma oportunidade desconfortável aparecer, tente dizer sim antes de calcular — e calcule depois. Observe o que acontece. A maioria das coisas que imaginamos que vão dar errado não dão, e quando dão, o aprendizado compensa.",
+    high: "Seu próximo desafio é ajudar outros a desenvolverem essa disposição. Compartilhar como você lida com o risco e o fracasso — de forma honesta, sem romantizar — é uma das formas mais poderosas de desenvolvimento que existem. Ensinar o que você sabe aprofunda o que você tem."
+  },
+  interp_risk: {
+    low: "Identifique uma conversa que você está evitando. Antes de tê-la, escreva o que você gostaria de dizer — sem enviar para ninguém. Isso já é um começo: coloca em palavras o que está guardado. Quando estiver pronto, comece a conversa com uma pergunta, não com uma afirmação.",
+    mid: "Pratique a honestidade com estrutura: antes de uma conversa difícil, pergunte-se 'o que eu observei?', 'o que eu sinto?', 'o que eu precisaria?'. Separar observação de julgamento torna a conversa mais segura para os dois lados.",
+    high: "Observe como você recebe o que é difícil de ouvir. A coragem relacional vai nos dois sentidos — falar com honestidade e ouvir com abertura. Se você já tem facilidade para falar, invista em aprofundar a escuta: o que o outro está tentando te dizer que você ainda não consegue ouvir completamente?"
+  },
+  collaborating: {
+    low: "Na próxima vez que estiver travado em algo, chame alguém com uma perspectiva muito diferente da sua — não para resolver, só para ouvir. Observe o que essa perspectiva abre que você não tinha visto. Você não precisa concordar; só precisa escutar.",
+    mid: "Experimente cocriar algo com alguém: uma decisão, um plano, uma ideia. Observe como o processo muda quando você genuinamente deixa a contribuição do outro modificar o resultado. Colaboração real é quando o produto final não seria possível sozinho.",
+    high: "Observe como você colabora quando a pressão aumenta. É nesses momentos que o padrão real aparece — se você recua para o modo solitário ou mantém a abertura. Esse é o ponto de desenvolvimento para quem já colabora bem em condições normais."
+  },
+  info_gathering: {
+    low: "Antes da próxima decisão importante, adicione uma fonte que você normalmente não consultaria — alguém que pensa diferente, um texto de perspectiva oposta, dados que contradizem o que você já acredita. Não para mudar de ideia necessariamente, mas para testar a robustez do que você pensa.",
+    mid: "Procure intencionalmente perspectivas que contradizem suas premissas sobre um tema que importa pra você. A pergunta útil é: 'quem discordaria de mim aqui, e o que eles diriam?' Isso não é fraqueza — é calibração.",
+    high: "Compartilhe o que você aprende com outras pessoas. Transformar informação em conversa é o que consolida o conhecimento e revela os pontos onde você ainda tem lacunas. Ensinar é a forma mais honesta de descobrir o que você realmente entende."
+  },
+  flexibility: {
+    low: "Introduza uma pequena imprevisibilidade na sua semana — um caminho diferente, uma resposta diferente, uma rotina alterada. Isso treina o músculo da adaptação em escala segura. O objetivo não é desestabilizar, mas criar familiaridade com o estado de 'diferente do habitual'.",
+    mid: "Quando algo mudar inesperadamente, tente nomear o que você está sentindo antes de reagir. Essa pausa entre o estímulo e a resposta cria espaço para escolher como agir, em vez de só reagir. Com prática, o custo emocional da mudança diminui.",
+    high: "Sua flexibilidade é um recurso que pode ajudar outros que travam diante da mudança. Compartilhar como você processa transições — com honestidade sobre o desconforto e clareza sobre o que ajuda — é uma contribuição real. Isso também aprofunda a sua própria capacidade."
+  },
+  speed: {
+    low: "Identifique uma situação onde você está esperando por mais informação ou certeza antes de agir. Pergunte: 'qual é o menor passo que eu poderia dar agora, com o que já tenho?' Ação mínima viável é melhor que paralisia perfeita.",
+    mid: "Pratique versões menores e mais rápidas das suas decisões. Escolha algo de baixo risco e aja mais rápido do que você normalmente faria. Observe o que acontece. Velocidade é uma habilidade — e se treina em escala pequena antes de grandes decisões.",
+    high: "Cuidado para não confundir velocidade com pressa. O valor da sua capacidade de agir rápido é ela ser aliada da reflexão — não substituta. O próximo nível é saber quando acelerar e quando intencionalmente desacelerar para pensar antes de mover."
+  },
+  feedback: {
+    low: "Escolha uma pessoa de confiança e faça uma pergunta direta: 'o que você acha que eu poderia fazer diferente em X?' Só escute. Não explique, não se defenda, não responda ainda. Só anote o que ouviu e processe depois. Isso é o começo.",
+    mid: "Crie o hábito de pedir feedback logo depois de uma situação importante — uma conversa, uma entrega, uma decisão. O timing importa: feedback imediato é mais preciso e mais fácil de conectar com o comportamento real. Com o tempo, você vai querer receber mais, não menos.",
+    high: "Você tem uma capacidade rara. O próximo nível é desenvolver discernimento: nem todo feedback tem o mesmo peso. Aprenda a distinguir feedback que vem de observação real de feedback que vem de projeção, insegurança ou perspectiva limitada. Isso não é defensividade — é calibração."
+  }
+};
+
+function renderQuestion() {
+  const q = shuffledQuestions[currentQ];
+  document.getElementById("question-text").textContent = q.text;
+  document.getElementById("error-msg").style.display = "none";
+
+  const list = document.getElementById("options-list");
+  list.innerHTML = "";
+  document.getElementById("dim-label").style.display = "none";
+  const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+  shuffled.forEach((opt) => {
+    const li = document.createElement("li");
+    const btn = document.createElement("button");
+    btn.className = "option-btn" + (answers[currentQ] === opt.score ? " selected" : "");
+    btn.textContent = opt.text;
+    btn.onclick = () => selectOption(opt.score, btn, list);
+    li.appendChild(btn);
+    list.appendChild(li);
+  });
+
+  const pct = Math.round(((currentQ + 1) / shuffledQuestions.length) * 100);
+  document.getElementById("progress-bar").style.width = Math.max(pct, 4) + "%";
+  document.getElementById("progress-label").textContent = "Situação " + (currentQ + 1) + " de " + shuffledQuestions.length;
+  document.getElementById("btn-back").style.visibility = currentQ === 0 ? "hidden" : "visible";
+  const isLast = currentQ === shuffledQuestions.length - 1;
+  document.getElementById("btn-next").textContent = isLast ? "Ver resultado" : "Próxima →";
+}
+
+function selectOption(score, btn, list) {
+  list.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+  answers[currentQ] = score;
+  document.getElementById("error-msg").style.display = "none";
+  saveState(false);
+}
+
+function goNext() {
+  if (answers[currentQ] === null) {
+    document.getElementById("error-msg").style.display = "block";
+    return;
+  }
+  if (currentQ < shuffledQuestions.length - 1) {
+    currentQ++;
+    saveState(false);
+    renderQuestion();
+    window.scrollTo(0, 0);
+  } else {
+    showResults();
+  }
+}
+
+function goBack() {
+  if (currentQ > 0) {
+    currentQ--;
+    saveState(false);
+    renderQuestion();
+    window.scrollTo(0, 0);
+  }
+}
+
+function computeScores() {
+  const scores = {};
+  const counts = {};
+  dimensions.forEach(d => { scores[d.key] = 0; counts[d.key] = 0; });
+  shuffledQuestions.forEach((q, i) => {
+    if (answers[i] !== null) {
+      scores[q.dim] += answers[i];
+      counts[q.dim]++;
+    }
+  });
+  const pct = {};
+  dimensions.forEach(d => {
+    pct[d.key] = counts[d.key] > 0 ? Math.round((scores[d.key] / (counts[d.key] * 4)) * 100) : 0;
+  });
+  return pct;
+}
+
+function getLevel(pct) {
+  if (pct <= 40) return "low";
+  if (pct <= 70) return "mid";
+  return "high";
+}
+
+function getBarColor(pct) {
+  if (pct <= 40) return "#D85A30";
+  if (pct <= 70) return "#BA7517";
+  return "#0F6E56";
+}
+
+function buildDiagnosis(scores, overall) {
+  const sorted = dimensions.map(d => ({ ...d, pct: scores[d.key] })).sort((a, b) => b.pct - a.pct);
+  const top3 = sorted.slice(0, 3);
+  const bottom3 = sorted.slice(-3).reverse();
+  const allHigh = Object.values(scores).every(v => v > 70);
+  const allLow = Object.values(scores).every(v => v < 40);
+
+  const bullets = [];
+
+  if (overall >= 75) {
+    bullets.push("Você tem um perfil de alta agilidade de aprendizagem — aprende rápido, se adapta bem e usa o ambiente como fonte de desenvolvimento.");
+  } else if (overall >= 50) {
+    bullets.push("Seu perfil é de agilidade moderada — você tem capacidades reais de aprendizado e adaptação, mas com pontos específicos onde a história ainda freia o movimento.");
+  } else {
+    bullets.push("Seu perfil indica que o aprendizado e a adaptação ainda custam muito. Isso não é um defeito — é um ponto de partida. As dimensões abaixo mostram exatamente onde investir.");
+  }
+
+  bullets.push("Suas dimensões mais desenvolvidas são " + top3.map(d => d.name.toLowerCase() + " (" + d.pct + "%)").join(", ") + ". São os recursos que você já tem disponíveis para navegar mudanças.");
+
+  bullets.push("As dimensões com maior espaço de crescimento são " + bottom3.map(d => d.name.toLowerCase() + " (" + d.pct + "%)").join(", ") + ". São os pontos onde sua história possivelmente cria mais atrito.");
+
+  const spreadMax = Math.max(...Object.values(scores));
+  const spreadMin = Math.min(...Object.values(scores));
+  const spread = spreadMax - spreadMin;
+  if (spread > 40) {
+    bullets.push("Há uma variação significativa entre suas dimensões (" + spread + " pontos entre a maior e a menor). Isso indica um perfil assimétrico: você é muito mais ágil em alguns contextos do que em outros.");
+  } else {
+    bullets.push("Suas dimensões são relativamente equilibradas (" + spread + " pontos de variação), o que indica consistência — você tende a aprender de forma similar em diferentes contextos.");
+  }
+
+  const reflScore = scores["reflecting"];
+  const speedScore = scores["speed"];
+  if (reflScore > 70 && speedScore < 50) {
+    bullets.push("Você reflete muito bem, mas tem dificuldade de agir rápido. Isso pode criar um ciclo de análise sem movimento — processar mais do que agir.");
+  } else if (speedScore > 70 && reflScore < 50) {
+    bullets.push("Você age com rapidez, mas reflete pouco. Isso pode criar um ciclo de movimento sem aprendizado — agir mais do que processar.");
+  }
+
+  const interpScore = scores["interp_risk"];
+  const collabScore = scores["collaborating"];
+  if (interpScore < 45 && collabScore < 45) {
+    bullets.push("Você tem dificuldade tanto com conversas difíceis quanto com colaboração — o que sugere que o contexto relacional em geral é um ponto de tensão no seu desenvolvimento.");
+  }
+
+  const flexScore = scores["flexibility"];
+  const expScore = scores["experimenting"];
+  if (flexScore > 70 && expScore > 70) {
+    bullets.push("A combinação de alta flexibilidade e alta disposição para experimentar é especialmente poderosa: você consegue tanto tolerar a mudança quanto provocá-la.");
+  }
+
+  return bullets;
+}
+
+function showResults() {
+  saveState(true);
+  document.getElementById("quiz-section").style.display = "none";
+  document.getElementById("result-section").style.display = "block";
+  window.scrollTo(0, 0);
+
+  const scores = computeScores();
+  const overall = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / dimensions.length);
+
+  document.getElementById("overall-score").textContent = overall + "%";
+
+  let nota = "";
+  if (overall >= 85) nota = "A";
+  else if (overall >= 70) nota = "B";
+  else if (overall >= 55) nota = "C";
+  else if (overall >= 40) nota = "D";
+  else nota = "E";
+  document.getElementById("overall-nota").textContent = "Nota " + nota;
+
+  const bullets = buildDiagnosis(scores, overall);
+  const diagEl = document.getElementById("diagnosis-bullets");
+  diagEl.innerHTML = "";
+  bullets.forEach(b => {
+    const li = document.createElement("li");
+    li.textContent = b;
+    diagEl.appendChild(li);
+  });
+
+  drawRadar(scores);
+
+  const container = document.getElementById("dimension-results");
+  container.innerHTML = "";
+  const sorted = [...dimensions].sort((a, b) => scores[b.key] - scores[a.key]);
+  sorted.forEach(d => {
+    const pct = scores[d.key];
+    const level = getLevel(pct);
+    const desc = dimDescriptions[d.key][level];
+    const sugg = dimSuggestions[d.key][level];
+    const barColor = getBarColor(pct);
+
+    const card = document.createElement("div");
+    card.className = "dim-result-card";
+    card.innerHTML = `
+      <div class="dim-result-header">
+        <span class="dim-result-name">${d.name}</span>
+        <span class="dim-result-score">${pct}%</span>
+      </div>
+      <div class="dim-bar-bg">
+        <div class="dim-bar" style="width: 0%; background: ${barColor};" data-target="${pct}"></div>
+      </div>
+      <p class="dim-text">${desc}</p>
+      <div class="dim-suggestion">${sugg}</div>
+    `;
+    container.appendChild(card);
+  });
+
+  setTimeout(() => {
+    document.querySelectorAll(".dim-bar").forEach(bar => {
+      bar.style.width = bar.dataset.target + "%";
+    });
+  }, 100);
+}
+
+function drawRadar(scores) {
+  const labels = dimensions.map(d => d.name);
+  const data = dimensions.map(d => scores[d.key]);
+
+  if (radarChart) { radarChart.destroy(); }
+
+  const ctx = document.getElementById("radar-chart").getContext("2d");
+  radarChart = new Chart(ctx, {
+    type: "radar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Seu perfil",
+        data: data,
+        backgroundColor: "rgba(55, 138, 221, 0.15)",
+        borderColor: "#378ADD",
+        borderWidth: 2,
+        pointBackgroundColor: "#378ADD",
+        pointRadius: 4
+      }]
+    },
+    options: {
+      scales: {
+        r: {
+          min: 0,
+          max: 100,
+          ticks: { display: false, stepSize: 25 },
+          grid: { color: "rgba(0,0,0,0.08)" },
+          angleLines: { color: "rgba(0,0,0,0.08)" },
+          pointLabels: { font: { size: 12 }, color: "#5f5e5a" }
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function restart() {
+  clearState();
+  initQuiz();
+  document.getElementById("quiz-section").style.display = "block";
+  document.getElementById("result-section").style.display = "none";
+  renderQuestion();
+  window.scrollTo(0, 0);
+}
+
+function downloadPDF() {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+  document.getElementById("print-date").textContent = "Gerado em " + dateStr;
+  setTimeout(() => window.print(), 100);
+}
+
+const savedState = loadState();
+if (savedState && savedState.shuffledQuestions && savedState.shuffledQuestions.length === questions.length) {
+  shuffledQuestions = savedState.shuffledQuestions;
+  answers = savedState.answers;
+  currentQ = savedState.currentQ;
+  if (savedState.showingResults) {
+    showResults();
+  } else {
+    renderQuestion();
+  }
+} else {
+  initQuiz();
+  renderQuestion();
+}
+</script>
+</body>
+</html>
